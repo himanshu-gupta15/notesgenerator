@@ -9,7 +9,7 @@ import Notes from './pages/Notes'
 import Pricing from './pages/Pricing'
 
 
-export const serverUrl="https://notesgenerator-seven.vercel.app/"
+export const serverUrl="https://himanshu-gupta15-notesgenerator.vercel.app/"
 function App() {
   const dispatch=useDispatch()
   const navigate=useNavigate()
