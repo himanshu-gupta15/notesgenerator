@@ -151,11 +151,12 @@ function Auth() {
           const name = user.displayName || "User"
           const email = user.email
 
-          const result = await axios.post(
-            `${serverUrl}/api/auth/google`,
-            { name, email },
-            { withCredentials: true }
-          )
+         const result = await axios.post(
+  `${serverUrl}/api/auth/google`,
+  { name, email }
+)
+
+localStorage.setItem("token", result.data.token);
 
           console.log(result.data)
         }
