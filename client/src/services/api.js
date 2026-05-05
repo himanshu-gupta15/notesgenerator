@@ -4,7 +4,12 @@ import { setUserData } from "../redux/userSlice";
 
 export const getCurrentUser=async(dispatch)=>{
     try{
-        const result=await axios.get(`${serverUrl}/api/user/currentuser`,{withCredentials:true})
+        // const result=await axios.get(`${serverUrl}/api/user/currentuser`,{withCredentials:true})
+        axios.get(`${serverUrl}/api/user/currentuser`, {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`
+  }
+})
         dispatch(setUserData(result.data))
           
     }catch(error){
