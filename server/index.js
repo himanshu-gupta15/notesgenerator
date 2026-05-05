@@ -1,3 +1,61 @@
+// import "dotenv/config";
+// import express from "express";
+// import connectDb from "./utils/connectDb.js";
+// import authRouter from "./routes/auth.route.js";
+// import cookieParser from "cookie-parser";
+// import cors from "cors";
+// import userRouter from "./routes/user.route.js";
+// import notesRouter from "./routes/genrate.route.js";
+// import pdfRouter from "./routes/pdf.route.js";
+// import { stripeWebhook } from "./controllers/credits.controller.js";
+// // import express from "express"
+// // import connectDb from "./utils/connectDb.js"
+// // import dotenv from "dotenv"
+// // dotenv.config()
+// // import authRouter from "./routes/auth.route.js"
+// // import cookieParser from "cookie-parser"
+// // import cors from "cors"
+// // import userRouter from "./routes/user.route.js"
+// // import notesRouter from "./routes/genrate.route.js"
+// // import pdfRouter from "./routes/pdf.route.js"
+// // import { stripeWebhook } from "./controllers/credits.controller.js"
+// const app=express()
+//  console.log(process.env.PORT)
+// app.post(
+//   "/api/credits/webhook",
+//   express.raw({type:"application/json"}),
+//   stripeWebhook
+// );
+
+// app.use(
+//     cors(
+//       {origin: "https://notesgenerator-ai.netlify.app"
+
+//         credentials:true,
+//         methods:["GET","POST","PUT","DELETE","OPTIONS"],
+//       }
+
+//     )
+// )
+
+// app.use(express.json())
+// app.use(cookieParser())
+
+// const PORT=process.env.PORT || 8000
+// app.get("/",(req,res)=>{
+//     res.send("Server is running")
+// })
+
+// app.use("/api/auth",authRouter );
+// app.use("/api/user",userRouter)
+// app.use("/api/notes",notesRouter)
+// app.use("/api/pdf",pdfRouter)
+// await connectDb()
+
+// app.listen(PORT,()=>{
+//     console.log(`Server is running on port ${PORT}`)
+// })
+
 import "dotenv/config";
 import express from "express";
 import connectDb from "./utils/connectDb.js";
@@ -8,50 +66,46 @@ import userRouter from "./routes/user.route.js";
 import notesRouter from "./routes/genrate.route.js";
 import pdfRouter from "./routes/pdf.route.js";
 import { stripeWebhook } from "./controllers/credits.controller.js";
-// import express from "express"
-// import connectDb from "./utils/connectDb.js"
-// import dotenv from "dotenv"
-// dotenv.config()
-// import authRouter from "./routes/auth.route.js"
-// import cookieParser from "cookie-parser"
-// import cors from "cors"
-// import userRouter from "./routes/user.route.js"
-// import notesRouter from "./routes/genrate.route.js"
-// import pdfRouter from "./routes/pdf.route.js"
-// import { stripeWebhook } from "./controllers/credits.controller.js"
-const app=express()
- console.log(process.env.PORT)
+
+const app = express();
+
+// ✅ Stripe webhook FIRST
 app.post(
   "/api/credits/webhook",
-  express.raw({type:"application/json"}),
+  express.raw({ type: "application/json" }),
   stripeWebhook
 );
 
+// ✅ FIXED CORS
 app.use(
-    cors(
-      {origin: "https://notesgenerator-ai.netlify.app"
+  cors({
+    origin: "https://notesgenerator-ai.netlify.app",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
-        credentials:true,
-        methods:["GET","POST","PUT","DELETE","OPTIONS"],
-      }
+app.use(express.json());
+app.use(cookieParser());
 
-    )
-)
+// ✅ Routes
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
 
-app.use(express.json())
-app.use(cookieParser())
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/notes", notesRouter);
+app.use("/api/pdf", pdfRouter);
 
-const PORT=process.env.PORT || 8000
-app.get("/",(req,res)=>{
-    res.send("Server is running")
-})
+// ✅ Safe DB connection
+try {
+  await connectDb();
+  console.log("DB connected");
+} catch (err) {
+  console.error("DB connection failed:", err);
+}
 
-app.use("/api/auth",authRouter );
-app.use("/api/user",userRouter)
-app.use("/api/notes",notesRouter)
-app.use("/api/pdf",pdfRouter)
-await connectDb()
-
-app.listen(PORT,()=>{
-    console.log(`Server is running on port ${PORT}`)
-})
+// ❌ REMOVE app.listen()
+// ✅ EXPORT instead
+export default app;
