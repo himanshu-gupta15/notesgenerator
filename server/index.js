@@ -29,7 +29,7 @@ app.post(
 
 app.use(
     cors(
-      {origin: "https://notesgenerator-ai.netlify.app/"
+      {origin: "https://notesgenerator-ai.netlify.app"
 
         credentials:true,
         methods:["GET","POST","PUT","DELETE","OPTIONS"],
