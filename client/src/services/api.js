@@ -6,8 +6,9 @@ export const getCurrentUser=async(dispatch)=>{
     try{
         const token = localStorage.getItem("token");
         
-        if (!token) {
-            console.log("No token found");
+        // Don't fetch if no token exists
+        if (!token || token === "null" || token === null) {
+            console.log("No valid token found, skipping user fetch");
             return;
         }
 
@@ -17,10 +18,13 @@ export const getCurrentUser=async(dispatch)=>{
             }
         });
         
-        dispatch(setUserData(result.data));
+        if (result.data) {
+            dispatch(setUserData(result.data));
+        }
           
     }catch(error){
         console.log("Error fetching user:", error);
+        // Don't dispatch error, just log it
     }
 }
 

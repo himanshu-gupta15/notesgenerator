@@ -151,17 +151,22 @@ function Auth() {
           const name = user.displayName || "User"
           const email = user.email
 
-         const result = await axios.post(
+          const result = await axios.post(
             `${serverUrl}/api/auth/google`,
             { name, email },
             { withCredentials: true }
           );
 
-          if (result.data.token) {
+          if (result.data && result.data.token) {
+            // Store token in localStorage
             localStorage.setItem("token", result.data.token);
+            console.log("✅ Token stored successfully");
+            
+            // Refresh page to trigger getCurrentUser with new token
+            window.location.href = "/";
+          } else {
+            console.error("No token in response", result.data);
           }
-
-          console.log(result.data);
         }
       } catch (error) {
         console.log("Google Auth Error", error)
