@@ -6,12 +6,13 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey:import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "examnotes-edbf3.firebaseapp.com",
-  projectId: "examnotes-edbf3",
-  storageBucket: "examnotes-edbf3.firebasestorage.app",
-  messagingSenderId: "880398011939",
-  appId: "1:880398011939:web:c89cc40fa2b055f6542b96"
+  apiKey: "AIzaSyCD46hGX16zSDzT9uv0VXchO9sVn_zhlcE",
+  authDomain: "whats-clone-389e9.firebaseapp.com",
+  projectId: "whats-clone-389e9",
+  storageBucket: "whats-clone-389e9.firebasestorage.app",
+  messagingSenderId: "664123018675",
+  appId: "1:664123018675:web:831725b158c16b65738fc6",
+  measurementId: "G-G920BESS73"
 };
 
 // Initialize Firebase
