@@ -118,7 +118,7 @@
 import { motion } from 'motion/react'
 import React, { useEffect, useState } from 'react'
 import { FcGoogle } from 'react-icons/fc'
-import { signInWithRedirect, getRedirectResult } from 'firebase/auth'
+import { signInWithPopup } from 'firebase/auth'
 import { auth, provider } from '../utils/firebase'
 import { serverUrl } from '../App'
 import axios from 'axios'
@@ -126,74 +126,53 @@ import axios from 'axios'
 function Auth() {
   const [loading, setLoading] = useState(false)
 
-  // 👉 Trigger Google Login
+  // 👉 Handle Google Sign In with Popup
   const handleGoogleAuth = async () => {
     if (loading) return
     setLoading(true)
 
     try {
-      await signInWithRedirect(auth, provider)
+      console.log("🔍 Starting Google sign-in...");
+      
+      const response = await signInWithPopup(auth, provider);
+      const user = response.user;
+
+      console.log("✅ User authenticated:", user.email);
+
+      const name = user.displayName || "User"
+      const email = user.email
+
+      console.log("📤 Sending to backend:", { name, email });
+
+      const result = await axios.post(
+        `${serverUrl}/api/auth/google`,
+        { name, email },
+        { withCredentials: true }
+      );
+
+      console.log("📥 Backend response:", result.data);
+
+      if (result.data && result.data.token) {
+        // Store token in localStorage
+        localStorage.setItem("token", result.data.token);
+        console.log("✅ Token stored successfully in localStorage");
+        console.log("Token preview:", result.data.token.substring(0, 20) + "...");
+        
+        // Redirect to home
+        window.location.href = "/";
+      } else {
+        console.error("❌ No token in response!", result.data);
+      }
+      
     } catch (error) {
-      console.log("Google Authentication Failed", error)
-      setLoading(false)
+      console.error("❌ Google Auth Error:", error);
+      if (error.response) {
+        console.error("Response data:", error.response.data);
+        console.error("Response status:", error.response.status);
+      }
+      setLoading(false);
     }
   }
-
-  // 👉 Handle redirect result
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        console.log("🔍 Checking for Google redirect result...");
-        const response = await getRedirectResult(auth)
-        
-        console.log("Response:", response);
-
-        if (response) {
-          const user = response.user
-          console.log("✅ User authenticated:", user.email);
-
-          const name = user.displayName || "User"
-          const email = user.email
-
-          console.log("📤 Sending to backend:", { name, email });
-
-          const result = await axios.post(
-            `${serverUrl}/api/auth/google`,
-            { name, email },
-            { withCredentials: true }
-          );
-
-          console.log("📥 Backend response:", result.data);
-
-          if (result.data && result.data.token) {
-            // Store token in localStorage
-            localStorage.setItem("token", result.data.token);
-            console.log("✅ Token stored successfully in localStorage");
-            console.log("Token value:", result.data.token);
-            
-            // Refresh page to trigger getCurrentUser with new token
-            setTimeout(() => {
-              window.location.href = "/";
-            }, 500);
-          } else {
-            console.error("❌ No token in response!", result.data);
-          }
-        } else {
-          console.log("ℹ️ No redirect result yet");
-        }
-      } catch (error) {
-        console.error("❌ Google Auth Error:", error);
-        if (error.response) {
-          console.error("Response data:", error.response.data);
-          console.error("Response status:", error.response.status);
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUser()
-  }, [])
 
   return (
     <div className='min-h-screen overflow-hidden bg-white text-black px-8'>
