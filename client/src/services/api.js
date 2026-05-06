@@ -4,16 +4,27 @@ import { setUserData } from "../redux/userSlice";
 
 export const getCurrentUser=async(dispatch)=>{
     try{
-        // const result=await axios.get(`${serverUrl}/api/user/currentuser`,{withCredentials:true})
-        axios.get(`${serverUrl}/api/user/currentuser`, {
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`
-  }
-})
-        dispatch(setUserData(result.data))
+        const token = localStorage.getItem("token");
+        
+        // Don't fetch if no token exists
+        if (!token || token === "null" || token === null) {
+            console.log("No valid token found, skipping user fetch");
+            return;
+        }
+
+        const result = await axios.get(`${serverUrl}/api/user/currentuser`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        
+        if (result.data) {
+            dispatch(setUserData(result.data));
+        }
           
     }catch(error){
-        console.log(error)
+        console.log("Error fetching user:", error);
+        // Don't dispatch error, just log it
     }
 }
 
