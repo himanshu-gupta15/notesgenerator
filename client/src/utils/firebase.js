@@ -6,7 +6,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey:import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "examnotes-edbf3.firebaseapp.com",
   projectId: "examnotes-edbf3",
   storageBucket: "examnotes-edbf3.firebasestorage.app",
