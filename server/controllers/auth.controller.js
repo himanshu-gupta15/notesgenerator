@@ -44,14 +44,22 @@ export const googleAuth = async (req, res) => {
 
     const token = await getToken(user._id);
 
-   res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,          // ✅ MUST be true in production (HTTPS)
-  sameSite: "None",      // ✅ MUST be None for cross-origin
-  maxAge: 7 * 24 * 60 * 60 * 1000
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
-    return res.status(200).json({ token });
+    return res.status(200).json({ 
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email
+      }
+    });
 
   } catch (error) {
     console.error("Google Auth Error:", error);

@@ -152,13 +152,16 @@ function Auth() {
           const email = user.email
 
          const result = await axios.post(
-  `${serverUrl}/api/auth/google`,
-  { name, email }
-)
+            `${serverUrl}/api/auth/google`,
+            { name, email },
+            { withCredentials: true }
+          );
 
-localStorage.setItem("token", result.data.token);
+          if (result.data.token) {
+            localStorage.setItem("token", result.data.token);
+          }
 
-          console.log(result.data)
+          console.log(result.data);
         }
       } catch (error) {
         console.log("Google Auth Error", error)
